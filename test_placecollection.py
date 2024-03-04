@@ -30,13 +30,22 @@ def run_tests():
 
     # TODO: Add more sorting tests
 
+    print("Test sorting - country:")
+    place_collection.sort("country")
+    print(place_collection)
+
+    print("Test sorting - name:")
+    place_collection.sort("name")
+    print(place_collection)
+
     print("Test sorting - country then priority")
     place_collection.sort("country", "priority")
     print(place_collection)
 
-    print("Test sorting - country:")
-    place_collection.sort("country")
+    print("Test sorting - name then priority")
+    place_collection.sort("name", "priority")
     print(place_collection)
+
 
     # TODO: Test saving places (check CSV file manually to see results)
 
