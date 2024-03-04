@@ -1,4 +1,5 @@
-"""(Incomplete) Tests for PlaceCollection class."""
+"""Complete Tests for PlaceCollection class."""
+
 from placecollection import PlaceCollection
 from place import Place
 
@@ -38,18 +39,24 @@ def run_tests():
     place_collection.sort("name")
     print(place_collection)
 
-    print("Test sorting - country then priority")
+    print("Test sorting - country then priority:")
     place_collection.sort("country", "priority")
     print(place_collection)
 
-    print("Test sorting - name then priority")
+    print("Test sorting - name then priority:")
     place_collection.sort("name", "priority")
     print(place_collection)
 
-
     # TODO: Test saving places (check CSV file manually to see results)
+    # print("Test save place collection:")
+    # place_collection.save_places('places.csv')
 
     # TODO: Add more tests, as appropriate, for each method
+    print("Test add unvisited places:")
+    print(place_collection.add_unvisited_places())
+
+    print("Test __repr__:")
+    print(place_collection.__repr__())
 
 
 run_tests()
