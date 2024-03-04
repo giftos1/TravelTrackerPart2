@@ -47,11 +47,11 @@ def run_tests():
     place_collection.sort("name", "priority")
     print(place_collection)
 
-    # TODO: Test saving places (check CSV file manually to see results)
-    # print("Test save place collection:")
-    # place_collection.save_places('places.csv')
+    # Test saving places (check CSV file manually to see results)
+    print("Test save place collection:")
+    place_collection.save_places('places.csv')
 
-    # TODO: Add more tests, as appropriate, for each method
+    # Add more tests, as appropriate, for each method
     print("Test add unvisited places:")
     print(place_collection.add_unvisited_places())
 
