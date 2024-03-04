@@ -31,5 +31,6 @@ class Place:
             return "not important"
 
     def __repr__(self):
-        return '[{}, {}. {}, {}]'.format(self.name, self.country, self.priority, self.is_visited)
+        # return "{}, {}, {}, {}".format(self.name, self.country, self.priority, self.is_visited)
+        return f"['{self.name}', '{self.country}', '{self.priority}', '{self.is_visited}']"
 
