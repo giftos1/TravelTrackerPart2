@@ -1,7 +1,5 @@
-"""..."""
-
-
-# Create your Place class in this file
+"""The Place class stores place data. The place data involves the name of the place, the country, priority and
+the visit status"""
 
 
 class Place:
@@ -11,19 +9,23 @@ class Place:
         self.priority = priority
         self.is_visited = is_visited
 
+    """print place data into csv in specified format"""
     def __str__(self):
-        return f"{self.name} in {self.country} (priority {self.priority}) added to Travel Tracker"
+        return f"{self.name},{self.country},{self.priority},{self.is_visited}"
 
-    def not_visited(self, visit_status):
-        if not visit_status:
+    """mark place as not visited"""
+    def not_visited(self):
+        if not self.is_visited:
             self.is_visited = "n"
         return self.is_visited
 
-    def visited(self, visit_status):
-        if visit_status:
+    """mark place as visited"""
+    def visited(self):
+        if self.is_visited:
             self.is_visited = "v"
         return self.is_visited
 
+    """determine if a place is important(having a priority <=2)"""
     def is_important(self, priority=2):
         if self.priority <= priority:
             return "important"
@@ -31,6 +33,5 @@ class Place:
             return "not important"
 
     def __repr__(self):
-        # return "{}, {}, {}, {}".format(self.name, self.country, self.priority, self.is_visited)
         return f"['{self.name}', '{self.country}', '{self.priority}', '{self.is_visited}']"
 
