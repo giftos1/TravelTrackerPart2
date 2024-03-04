@@ -2,6 +2,9 @@
 import csv
 from operator import attrgetter
 
+from place import Place
+
+
 # Create your PlaceCollection class in this file
 
 
@@ -16,10 +19,10 @@ class PlaceCollection:
             row = each_row.strip()
             rows = row.split(",")  # split each row in file to a list
             rows[2] = int(rows[2])  # convert number string to integer for sorting
-            self.places.append(rows)
+            self.places.append(Place(rows[0], rows[1], rows[2], rows[3]))  # appending instances to list
 
-    def save_places(self):
-        place_file = open("places.csv", "w", newline='')
+    def save_places(self, file):
+        place_file = open(file, "w", newline='')
         writer = csv.writer(place_file)
         writer.writerows(self.places)  # write places in file using csv module
         place_file.close()
@@ -35,10 +38,11 @@ class PlaceCollection:
 
     def sort(self, key, priority=None):
         if priority is None:
-            return sorted(self.places, key=attrgetter(key))
+            self.places = sorted(self.places, key=attrgetter(key))
+            return self.places
         else:
-            return sorted(self.places, key=attrgetter(key, priority))
+            self.places = sorted(self.places, key=attrgetter(key, priority))
+            return self.places
 
     def __repr__(self):
         return repr(self.places)
-
