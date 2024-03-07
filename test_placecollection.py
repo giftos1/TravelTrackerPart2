@@ -21,7 +21,9 @@ def run_tests():
 
     # Test adding a new Place with values
     print("Test adding new place:")
-    place_collection.add_place(Place("Smithfield", "Australia", 5, False))
+    new_place = Place("Smithfield", "Australia", 5, False)
+    place_collection.add_place(new_place)
+    new_place.not_visited()
     print(place_collection)
 
     # Test sorting places
@@ -29,20 +31,27 @@ def run_tests():
     place_collection.sort("priority")
     print(place_collection)
 
-    # TODO: Add more sorting tests
+    # Test sorting by visit-status
+    print("Test sorting - visit-status:")
+    place_collection.sort("is_visited")
+    print(place_collection)
 
+    # Test sorting by country
     print("Test sorting - country:")
     place_collection.sort("country")
     print(place_collection)
 
+    # Test sorting by name
     print("Test sorting - name:")
     place_collection.sort("name")
     print(place_collection)
 
+    # Test sorting by country then priority
     print("Test sorting - country then priority:")
     place_collection.sort("country", "priority")
     print(place_collection)
 
+    # Test sorting by name then priority
     print("Test sorting - name then priority:")
     place_collection.sort("name", "priority")
     print(place_collection)
@@ -55,6 +64,7 @@ def run_tests():
     print("Test add unvisited places:")
     print(place_collection.add_unvisited_places())
 
+    # test string representation of list of class objects
     print("Test __repr__:")
     print(place_collection.__repr__())
 
