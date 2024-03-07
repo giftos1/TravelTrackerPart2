@@ -1,14 +1,12 @@
-# Copy TravelTrackerPart1 to this file, then update it to use Place class
-# Optionally, you may also use PlaceCollection class
+# Copy TravelTrackerPart1 to this file, then update it to use Place and PlaceCollection class
 
 from place import Place
+from placecollection import PlaceCollection
 
 """
 Name:Gift Sydney Ogingo
 GitHub URL:https://github.com/giftos1/TravelTrackerPart1
 """
-import csv
-from operator import itemgetter
 
 FILENAME = 'places.csv'
 NOT_VISITED = "n"
@@ -17,24 +15,20 @@ VISITED = "v"
 
 def main():
     """Run the whole program"""
-    print("Travel Tracker 1.0 - by Gift Ogingo")  # display welcome message
 
-    # load csv file and append sorted data to a nested list
-    places = []
-    place_file = open("places.csv", "r")
-    for each_row in place_file:
-        row = each_row.strip()
-        rows = row.split(",")  # split each row in file to a list
-        rows[2] = int(rows[2])  # convert number string to integer for sorting
-        places.append(rows)
+    print("Travel Tracker 2.0 - by Gift Ogingo")  # display welcome message
 
-    places.sort(key=itemgetter(3, 2))  # sort list by visited status then priority
-    print(len(places), "places loaded from", FILENAME)
+    place_collection = PlaceCollection()  # contains a list of Place objects
+    place_collection.load_places('places.csv')  # load from csv file into Place objects in the list
+    place_collection.sort("is_visited", "priority")  # sort by the key passed in then by priority
+
+    print(len(place_collection.places), "places loaded from", FILENAME)
 
     menu_choices = ["l", "a", "m", "q"]
 
     menu_input = ""
     while menu_input != "q":
+        places = place_collection.places
         menu_input = input("Menu:\n"
                            "L - List Places\n"
                            "A - Add new place\n"
@@ -43,9 +37,8 @@ def main():
                            ">>>").lower()
 
         if menu_input == "l":
-            place = [place for place in places]
-
-            if NOT_VISITED in place[0][3]:  # check if there are still any unvisited places
+            visit_statuses = [place.is_visited for place in places]
+            if NOT_VISITED in visit_statuses:  # check if there are still any unvisited places
                 get_max_name_length(places)
             else:
                 print(len(places), "places. No places left to visit why not add a new place?")
@@ -54,14 +47,14 @@ def main():
         elif menu_input == "a":
             name_input = validate_name_input()
             country_input = validate_country_input()
-            get_priority(name_input, country_input, places)  # Get priority input and check for ValueError
+            get_priority(name_input, country_input, place_collection)  # Get priority input and check for ValueError
 
         elif menu_input == "m":
-            place = [place for place in places]
-            if NOT_VISITED in place[0][3]:  # check if there are still any unvisited places
+            visit_statuses = [place.is_visited for place in places]
+            if NOT_VISITED in visit_statuses:  # check if there are still any unvisited places
                 get_max_name_length(places)
                 print("Enter the number of a place to mark as visited")
-                place_number_input(places)
+                place_number_input(places, place_collection)
 
             else:
                 print("No unvisited places")
@@ -72,11 +65,7 @@ def main():
         else:
             print(f"{len(places)} places saved in places.csv")  # ends loop when user chooses q
 
-    # write nested list to file and close file
-    place_file = open("places.csv", "w", newline='')
-    writer = csv.writer(place_file)
-    writer.writerows(places)  # write places in file using csv module
-    place_file.close()
+    place_collection.save_places('places.csv')  # write nested list to file and close file
 
     print("Have a nice day:)")  # display message when user chooses q
 
@@ -84,60 +73,52 @@ def main():
 def get_max_name_length(places):
     """get maximum length of city and country name in file and call display_formatted_list"""
 
-    city_names = []
-    country_names = []
+    # add city and country names to respective lists
+    city_names = [place.name for place in places]
+    country_names = [place.country for place in places]
 
-    # add the name of each city and country to respective lists
-    for each_place in places:
-        city_name = each_place[0].strip("\n")
-        city_names.append(city_name)
-
-        country_name = each_place[1].strip("\n")
-        country_names.append(country_name)
-
-    # get the name of city and country with the maximum string length from respective lists
     max_country_length = len(max(country_names, key=len))
     max_city_length = len(max(city_names, key=len))
 
     return display_formatted_list(max_city_length, max_country_length, places)
 
 
-def display_formatted_list(max_city_length, max_country_length, places):
+def display_formatted_list(max_name_length, max_country_length, places):
     """Display a neatly formatted list of places when user chooses list"""
     unvisited_count = 0
     count = 0
-
     for place in places:
         count += 1
 
-        additional_city_space = max_city_length - len(place[0])  # additional spaces to be added to line up a city with
+        additional_city_space = max_name_length - len(place.name)  # additional spaces to be added to line up a city
+        # with
         # a shorter name length to the city with the longest name length
 
-        additional_country_space = max_country_length - len(place[1])  # additional spaces to be added to line up a
+        additional_country_space = max_country_length - len(place.country)  # additional spaces to be added to line up a
         # country with a shorter name length to the country with the longest name length
 
         # display a dynamic lined up list based on longest city and country name.
-        if len(place[0]) != max_city_length and len(place[1]) != max_country_length:
+        if len(place.name) != max_name_length and len(place.country) != max_country_length:
 
             # check if place is unvisited(n) and add a star(*) before the number if true
             # count the number of unvisited places
-            if "n" in place[3]:
+            if NOT_VISITED in place.is_visited:
                 unvisited_count += 1
-                print(f"*{count}.", place[0], "{:{}}in".format("", additional_city_space), place[1],
-                      "{:{}}priority".format("", additional_country_space), place[2])
+                print(f"*{count}.", place.name, "{:{}}in".format("", additional_city_space), place.country,
+                      "{:{}}priority".format("", additional_country_space), place.priority)
             else:
-                print(f" {count}.", place[0], "{:{}}in".format("", additional_city_space), place[1],
-                      "{:{}}priority".format("", additional_country_space), place[2])
+                print(f" {count}.", place.name, "{:{}}in".format("", additional_city_space), place.country,
+                      "{:{}}priority".format("", additional_country_space), place.priority)
 
         else:
             # No spaces are added if the city and country name's length is the maximum from the list of city_names and
             # country names in get_max_name_length() function
 
-            if "n" in place[3]:
+            if NOT_VISITED in place.is_visited:
                 unvisited_count += 1
-                print(f"*{count}.", place[0], "in", place[1], "priority", place[2])
+                print(f"*{count}.", place.name, "in", place.country, "priority", place.priority)
             else:
-                print(f" {count}.", place[0], "in", place[1], "priority", place[2])
+                print(f" {count}.", place.name, "in", place.country, "priority", place.priority)
 
     return display_visit_status(count, unvisited_count)
 
@@ -173,7 +154,7 @@ def validate_country_input():
     return country_input
 
 
-def get_priority(name_input, country_input, places):
+def get_priority(name_input, country_input, place_collection):
     """Get priority input and validate input
     Display the added place through printing the name,country and priority of the place"""
     validate_input = False
@@ -190,17 +171,19 @@ def get_priority(name_input, country_input, places):
             print("Invalid input; enter a valid number")
 
     print(f"{name_input} in {country_input} (priority {priority_input}) added to Travel Tracker")  # display added place
-    return new_added_place(name_input, country_input, priority_input, places)
+    return add_new_place(name_input, country_input, priority_input, place_collection)
 
 
-def new_added_place(name, country, priority_input, places):
+def add_new_place(name, country, priority, place_collection):
     """Add new place to the nested list of places and sort the list accordingly"""
-    new_place = [name, country, priority_input, NOT_VISITED]
-    places.append(new_place)
-    places.sort(key=itemgetter(3, 2))
+
+    new_place = Place(name, country, priority, False)
+    new_place.not_visited()  # convert False to not visited(n)
+    place_collection.add_place(new_place)
+    place_collection.sort("is_visited", "priority")
 
 
-def place_number_input(places):
+def place_number_input(places, place_collection):
     """Validate the place number the user chooses to mark as visited. If place number is within range call
     convert_unvisited_place() """
     number_input = 0
@@ -219,20 +202,20 @@ def place_number_input(places):
 
         except ValueError:
             print("Invalid input; enter a valid number")
-    return convert_unvisited_place(number_input, places)
+    return convert_unvisited_place(number_input, places, place_collection)
 
 
-def convert_unvisited_place(number_input, places):
+def convert_unvisited_place(number_input, places, place_collection):
     """Convert unvisited place to visited if user marks it as visited"""
     for count, place in enumerate(places):
         count += 1
         while number_input == count:  # checks the number which the user types in that corresponds to a given place
-            if place[3] == VISITED:
+            if place.is_visited == VISITED:
                 print("That place is already visited!")
             else:
-                place[3] = VISITED
-                print(f"{place[0]} in {place[1]} visited!")
-                places.sort(key=itemgetter(3, 2))
+                place.is_visited = VISITED
+                print(f"{place.name} in {place.country} visited!")
+                place_collection.sort("is_visited", "priority")
             break
 
 
