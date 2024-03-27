@@ -5,7 +5,7 @@ from placecollection import PlaceCollection
 
 """
 Name:Gift Sydney Ogingo
-GitHub URL:https://github.com/giftos1/TravelTrackerPart1
+GitHub URL:https://github.com/giftos1/TravelTrackerPart2
 """
 
 FILENAME = 'places.csv'
@@ -29,6 +29,7 @@ def main():
     menu_input = ""
     while menu_input != "q":
         places = place_collection.places
+        unvisited_count = place_collection.add_unvisited_places()  # add unvisited places
         menu_input = input("Menu:\n"
                            "L - List Places\n"
                            "A - Add new place\n"
@@ -39,22 +40,22 @@ def main():
         if menu_input == "l":
             visit_statuses = [place.is_visited for place in places]
             if NOT_VISITED in visit_statuses:  # check if there are still any unvisited places
-                get_max_name_length(places)
+                get_max_name_length(places, unvisited_count)
             else:
                 print(len(places), "places. No places left to visit why not add a new place?")
 
         # Get name, country and priority input of a place and add them to the Travel Tracker
         elif menu_input == "a":
-            name_input = validate_name_input()
-            country_input = validate_country_input()
+            name_input = validate_name()
+            country_input = validate_country()
             get_priority(name_input, country_input, place_collection)  # Get priority input and check for ValueError
 
         elif menu_input == "m":
             visit_statuses = [place.is_visited for place in places]
             if NOT_VISITED in visit_statuses:  # check if there are still any unvisited places
-                get_max_name_length(places)
+                get_max_name_length(places, unvisited_count)
                 print("Enter the number of a place to mark as visited")
-                place_number_input(places, place_collection)
+                place_number(places, place_collection)
 
             else:
                 print("No unvisited places")
@@ -70,7 +71,7 @@ def main():
     print("Have a nice day:)")  # display message when user chooses q
 
 
-def get_max_name_length(places):
+def get_max_name_length(places, unvisited_count):
     """get maximum length of city and country name in file and call display_formatted_list"""
 
     # add city and country names to respective lists
@@ -80,16 +81,14 @@ def get_max_name_length(places):
     max_country_length = len(max(country_names, key=len))
     max_city_length = len(max(city_names, key=len))
 
-    return display_formatted_list(max_city_length, max_country_length, places)
+    return display_formatted_list(max_city_length, max_country_length, places, unvisited_count)
 
 
-def display_formatted_list(max_name_length, max_country_length, places):
+def display_formatted_list(max_name_length, max_country_length, places, unvisited_count):
     """Display a neatly formatted list of places when user chooses list"""
-    unvisited_count = 0
     count = 0
     for place in places:
         count += 1
-
         additional_city_space = max_name_length - len(place.name)  # additional spaces to be added to line up a city
         # with
         # a shorter name length to the city with the longest name length
@@ -103,7 +102,6 @@ def display_formatted_list(max_name_length, max_country_length, places):
             # check if place is unvisited(n) and add a star(*) before the number if true
             # count the number of unvisited places
             if NOT_VISITED in place.is_visited:
-                unvisited_count += 1
                 print(f"*{count}.", place.name, "{:{}}in".format("", additional_city_space), place.country,
                       "{:{}}priority".format("", additional_country_space), place.priority)
             else:
@@ -115,7 +113,6 @@ def display_formatted_list(max_name_length, max_country_length, places):
             # country names in get_max_name_length() function
 
             if NOT_VISITED in place.is_visited:
-                unvisited_count += 1
                 print(f"*{count}.", place.name, "in", place.country, "priority", place.priority)
             else:
                 print(f" {count}.", place.name, "in", place.country, "priority", place.priority)
@@ -128,7 +125,7 @@ def display_visit_status(count, unvisited_count):
     return print(f"{count} places. You still want to visit {unvisited_count} places.")
 
 
-def validate_name_input():
+def validate_name():
     """Get name input from user and check for blank answers"""
     name_input = ""
     validate_input = False
@@ -141,7 +138,7 @@ def validate_name_input():
     return name_input
 
 
-def validate_country_input():
+def validate_country():
     """Get country input from user and check for blank answers"""
     country_input = ""
     validate_input = False
@@ -183,7 +180,7 @@ def add_new_place(name, country, priority, place_collection):
     place_collection.sort("is_visited", "priority")
 
 
-def place_number_input(places, place_collection):
+def place_number(places, place_collection):
     """Validate the place number the user chooses to mark as visited. If place number is within range call
     convert_unvisited_place() """
     number_input = 0
