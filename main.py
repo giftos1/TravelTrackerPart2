@@ -18,7 +18,8 @@ from placecollection import PlaceCollection
 
 INPUT_TO_ATTRIBUTE = {}
 SPINNER_VALUES = ["visited", "priority", "country", "name"]
-blue = Color(0.5, 0.5, 1)
+ORIGINAL_COLOR = (0, 0.6, 0.2)
+ALTERNATE_COLOR = (0.5, 0.5, 1)
 
 
 class TravelTrackerApp(App):
@@ -55,13 +56,11 @@ class TravelTrackerApp(App):
         for place in self.places:
             # Create a button for each Place object, specifying the text
             if place.is_visited == "v":
-                self.color = (0, 0.6, 0.2)
-                place_button = Button(text=f"{place.name} in {place.country}, priority {place.priority} (visited)",
-                                      background_color=self.color)
+                place_button = Button(text=f"{place.name} in {place.country}, priority {place.priority} (visited)")
+                place_button.background_color = ORIGINAL_COLOR
             else:
-                self.color = (0.5, 0.5, 1)
-                place_button = Button(text=f"{place.name} in {place.country}, priority {place.priority}",
-                                      background_color=self.color)
+                place_button = Button(text=f"{place.name} in {place.country}, priority {place.priority}")
+                place_button.background_color = ALTERNATE_COLOR
             place_button.bind(on_release=self.press_entry)
             # Store a reference to the place object in the button object
             place_button.place = place
@@ -71,17 +70,18 @@ class TravelTrackerApp(App):
         """Handle pressing place buttons."""
         # Each button was given its own ".place" object reference, so we can get it directly
         place = instance.place
+
         # Update button text
         if place.is_visited == "v":
             place.is_visited = "n"
             self.status_text = f"You need to visit {place.name}."
-            place.color = (0.5, 0.5, 1)
+            instance.background_color = ALTERNATE_COLOR
             self.status_number += 1
             instance.text = f"{place.name} in {place.country}, priority {place.priority}"
         else:
             self.status_text = f"You visited {place.name}. Great Travelling!"
             place.is_visited = "v"
-            self.color = (0, 0.2, 0.2)
+            instance.background_color = ORIGINAL_COLOR
             self.status_number -= 1
             instance.text = f"{place.name} in {place.country}, priority {place.priority} (visited)"
         if place.is_visited == "n" and place.priority <= 2:
