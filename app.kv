@@ -22,16 +22,27 @@ GridLayout:
         Label:
             text: 'Name:'
         TextInput:
+            id: name
+            multiline: False
+            write_tab: False
         Label:
             text: 'Country:'
         TextInput:
+            id: country
+            multiline: False
+            write_tab: False
         Label:
             text: 'Priority:'
         TextInput:
+            id: priority
+            multiline: False
+            write_tab: False
         Button:
             text: 'Add Place'
+            on_release: app.press_add(name.text, country.text, priority.text)
         Button:
             text: 'Clear'
+            on_press: app.clear_all()
 
     BoxLayout:
         size_hint_x: 0.7
@@ -47,6 +58,7 @@ GridLayout:
         BoxLayout:
             size_hint_y: 0.05
             Label:
+                id: status_text
                 text: app.status_text
 
 
