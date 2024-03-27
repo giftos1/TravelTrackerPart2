@@ -96,6 +96,13 @@ class TravelTrackerApp(App):
         """save new state of places in places.csv"""
         self.places_collection.save_places('places.csv')
 
+    def clear_all(self):
+        """Clear all input fields and status text."""
+        self.root.ids.name.text = ""
+        self.root.ids.country.text = ""
+        self.root.ids.priority.text = ""
+        self.status_text = ""
+
 
 if __name__ == '__main__':
     TravelTrackerApp().run()
