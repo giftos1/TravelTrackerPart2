@@ -9,11 +9,11 @@ GitHub URL: https://github.com/giftos1/TravelTrackerPart2
 
 from kivy.app import App
 from kivy.core.window import Window
-from kivy.graphics import Color
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ListProperty, NumericProperty, ColorProperty
 from kivy.uix.button import Button
 
+from place import Place
 from placecollection import PlaceCollection
 
 INPUT_TO_ATTRIBUTE = {}
@@ -65,6 +65,21 @@ class TravelTrackerApp(App):
             # Store a reference to the place object in the button object
             place_button.place = place
             self.root.ids.entries_box.add_widget(place_button)
+
+    def press_add(self, name, country, priority):
+        """save a new entry to memory
+        :param name: name text input (from app.kv)
+        :param country: country text input (from app.kv)
+        :param priority: priority text input (from app.kv)"""
+        new_place = Place(name, country, priority, False)
+        new_place.not_visited()  # mark new place as not visited(n)
+        self.places_collection.add_place(new_place)
+        # add button for new entry (same as in create_widgets())
+        place_button = Button(text=f"{name} in {country}, priority {priority}")
+        place_button.background_color = ALTERNATE_COLOR
+        place_button.bind(on_release=self.press_entry)
+        self.root.ids.entries_box.add_widget(place_button)
+        self.clear_all()
 
     def press_entry(self, instance):
         """Handle pressing place buttons."""
