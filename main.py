@@ -37,8 +37,8 @@ class TravelTrackerApp(App):
         self.places_collection = PlaceCollection()
         # list of PlaceCollection objects from places.csv
         self.places_collection.load_places('places.csv')
-
         self.places = self.places_collection.places
+        self.spinner_text = SPINNER_VALUES[0]
         self.place_values = SPINNER_VALUES
         self.status_text = f"Welcome to Travel Tracker 2.0"
         self.unvisited_count = self.places_collection.add_unvisited_places()
@@ -51,6 +51,11 @@ class TravelTrackerApp(App):
         self.root = Builder.load_file('app.kv')
         self.create_widgets()
         return self.root
+
+    def change_state(self, sort_value):
+        """change sort value of spinner on select"""
+        self.spinner_text = sort_value
+        print("changed to", self.spinner_text)
 
     def create_widgets(self):
         """Create buttons from list of objects and add them to the GUI."""
@@ -65,7 +70,10 @@ class TravelTrackerApp(App):
             place_button.bind(on_release=self.press_entry)
             # Store a reference to the place object in the button object
             place_button.place = place
+            self.places_collection.sort(self.spinner_text)
+            print("spinner value", self.spinner_text)
             self.root.ids.entries_box.add_widget(place_button)
+
 
     def press_add(self, name, country, priority):
         """save a new entry to memory
@@ -120,12 +128,6 @@ class TravelTrackerApp(App):
             instance.text = f"{place.name} in {place.country}, priority {place.priority} (visited)"
         if place.is_visited == "n" and int(place.priority) <= 2:
             self.status_text = f"You need to visit {place.name}. Get going!"
-
-    def change_state(self, value):
-        """change sort value of spinner on select"""
-        for i in range(0, len(SPINNER_VALUES)):
-            self.spinner_text = value
-        # self.places_collection.sort(self.spinner_text)
 
     def on_stop(self):
         """save new state of places in places.csv"""

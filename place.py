@@ -3,6 +3,7 @@ the visit status"""
 
 
 class Place:
+
     def __init__(self, name="", country="", priority=0, is_visited=""):
         self.name = name
         self.country = country

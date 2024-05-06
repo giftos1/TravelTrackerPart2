@@ -12,7 +12,7 @@ GridLayout:
             # text_autoupdate sets the text to the first value of the values property
             text_autoupdate: True
             # values takes a list - could be a literal here or variable in app
-            values: app.values
+            values: app.place_values
             # on_text is the event (not on_release) when the text updates (spinner option is selected)
             # note that on_text runs even when the text is set for the very first time
             on_text: app.change_state(self.text)

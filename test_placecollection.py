@@ -57,8 +57,8 @@ def run_tests():
     print(place_collection)
 
     # Test saving places (check CSV file manually to see results)
-    print("Test save place collection:")
-    place_collection.save_places('places.csv')
+    # print("Test save place collection:")
+    # place_collection.save_places('places.csv')
 
     # Add more tests, as appropriate, for each method
     print("Test add unvisited places:")

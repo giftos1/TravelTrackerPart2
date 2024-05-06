@@ -1,7 +1,6 @@
 """This PlaceCollection class contains a single attribute of places that is a list
 of place objects. It also contains methods - load places, save places, add place,
 sort and add unvisited places."""
-import csv
 from operator import attrgetter
 from place import Place
 
@@ -28,7 +27,7 @@ class PlaceCollection:
         """get number of unvisited places"""
         unvisited_count = 0
         for place in self.places:
-            if place.is_visited == "n" or not place.is_visited:
+            if place.is_visited == "n":
                 unvisited_count += 1
         return unvisited_count
 
