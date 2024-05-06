@@ -5,6 +5,7 @@ Brief Project Description:
 GitHub URL: https://github.com/giftos1/TravelTrackerPart2
 
 """
+
 # Create your main program in this file, using the TravelTrackerApp class
 
 from kivy.app import App
@@ -36,9 +37,9 @@ class TravelTrackerApp(App):
         self.places_collection = PlaceCollection()
         # list of PlaceCollection objects from places.csv
         self.places_collection.load_places('places.csv')
-        self.places_collection.sort("is_visited", "priority")
+
         self.places = self.places_collection.places
-        self.values = SPINNER_VALUES
+        self.place_values = SPINNER_VALUES
         self.status_text = f"Welcome to Travel Tracker 2.0"
         self.unvisited_count = self.places_collection.add_unvisited_places()
         self.status_number = self.unvisited_count
@@ -69,23 +70,41 @@ class TravelTrackerApp(App):
     def press_add(self, name, country, priority):
         """save a new entry to memory
         :param name: name text input (from app.kv)
-        :param country: country text input (from app.kv)
-        :param priority: priority text input (from app.kv)"""
-        new_place = Place(name, country, priority, False)
-        new_place.not_visited()  # mark new place as not visited(n)
-        self.places_collection.add_place(new_place)
-        # add button for new entry (same as in create_widgets())
-        place_button = Button(text=f"{name} in {country}, priority {priority}")
-        place_button.background_color = ALTERNATE_COLOR
-        place_button.bind(on_release=self.press_entry)
-        self.root.ids.entries_box.add_widget(place_button)
-        self.clear_all()
+        :param country: country (from app.kv)
+        :param priority: priority (from app.kv)"""
+
+        #  check for empty fields
+        if self.root.ids.name.text == "" or self.root.ids.country.text == "" or self.root.ids.priority.text == "":
+            self.status_text = "All fields must be completed!"
+
+        # check if string is 0 or below 0
+        elif self.root.ids.priority.text == "0" or (self.root.ids.priority.text.startswith('-')
+                                                    and self.root.ids.priority.text[1:].isdigit()):
+            self.status_text = "Priority must be > 0"
+
+        # check if there are any letters in the string
+        elif not self.root.ids.priority.text.isdigit():
+            self.status_text = "Please enter a valid number"
+        else:
+            new_place = Place(name, country, priority, False)
+            new_place.not_visited()  # mark new place as not visited(n)
+            self.places_collection.add_place(new_place)
+
+            # add button for new entry (same as in create_widgets())
+            place_button = Button(text=f"{name} in {country}, priority {priority}")
+            place_button.background_color = ALTERNATE_COLOR
+            place_button.bind(on_release=self.press_entry)
+            self.root.ids.entries_box.add_widget(place_button)
+            self.clear_all()
+
+            for place in self.places:
+                place_button.place = place
 
     def press_entry(self, instance):
         """Handle pressing place buttons."""
         # Each button was given its own ".place" object reference, so we can get it directly
         place = instance.place
-
+        print(self.spinner_text)
         # Update button text
         if place.is_visited == "v":
             place.is_visited = "n"
@@ -99,13 +118,14 @@ class TravelTrackerApp(App):
             instance.background_color = ORIGINAL_COLOR
             self.status_number -= 1
             instance.text = f"{place.name} in {place.country}, priority {place.priority} (visited)"
-        if place.is_visited == "n" and place.priority <= 2:
+        if place.is_visited == "n" and int(place.priority) <= 2:
             self.status_text = f"You need to visit {place.name}. Get going!"
 
     def change_state(self, value):
         """change sort value of spinner on select"""
         for i in range(0, len(SPINNER_VALUES)):
             self.spinner_text = value
+        # self.places_collection.sort(self.spinner_text)
 
     def on_stop(self):
         """save new state of places in places.csv"""
